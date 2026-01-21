@@ -290,10 +290,10 @@ static void DatasetGetPath(
     char path[PATH_MAX];
     struct stat st;
 
-    // Prevent path traversal attacks
+    /* Prevent path traversal attacks */
     if (SCPathContainsTraversal(in_path)) {
         SCLogError("Path traversal detected in dataset path: %s", in_path);
-        out_path[0] = '\0'; // Ensure output is empty on error
+        out_path[0] = '\0'; /* Ensure output is empty on error */
         return;
     }
 

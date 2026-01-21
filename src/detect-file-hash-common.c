@@ -237,7 +237,7 @@ static DetectFileHashData *DetectFileHashParse (const DetectEngineCtx *de_ctx,
         goto error;
     }
 
-    // Prevent path traversal attacks before any file operations
+    /* Prevent path traversal attacks before any file operations */
     if (SCPathContainsTraversal(str)) {
         SCLogError("Path traversal detected in hash file path: %s", str);
         goto error;
