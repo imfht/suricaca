@@ -224,9 +224,21 @@ static DetectFileHashData *DetectFileHashParse (const DetectEngineCtx *de_ctx,
         goto error;
     }
 
+    /* Prevent path traversal attacks on user input */
+    if (SCPathContainsTraversal(str)) {
+        SCLogError("Path traversal detected in hash file path: %s", str);
+        goto error;
+    }
+
     /* get full filename */
     filename = DetectLoadCompleteSigPath(de_ctx, str);
     if (filename == NULL) {
+        goto error;
+    }
+
+    /* Validate resolved path to prevent TOCTOU */
+    if (SCPathContainsTraversal(filename)) {
+        SCLogError("Path traversal detected in resolved hash file path: %s", filename);
         goto error;
     }
 
