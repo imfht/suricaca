@@ -237,15 +237,16 @@ static DetectFileHashData *DetectFileHashParse (const DetectEngineCtx *de_ctx,
         goto error;
     }
 
+    // Prevent path traversal attacks before any file operations
+    if (SCPathContainsTraversal(str)) {
+        SCLogError("Path traversal detected in hash file path: %s", str);
+        goto error;
+    }
+
     char line[8192] = "";
     fp = fopen(filename, "r");
     if (fp == NULL) {
 #ifdef HAVE_LIBGEN_H
-        // Prevent path traversal attacks
-        if (SCPathContainsTraversal(str)) {
-            SCLogError("Path traversal detected in hash file path: %s", str);
-            goto error;
-        }
         char *dir = dirname(rule_filename);
         if (dir != NULL) {
             char path[PATH_MAX];
